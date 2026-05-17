@@ -15,35 +15,33 @@ export const AddContact = () => {
   });
 
   useEffect(() => {
-    const loadContact = async () => {
-      if (store.contacts.length === 0) {
-        await actions.getContacts();
+    actions.getContacts();
+  }, []);
+
+  useEffect(() => {
+    if (id && store.contacts.length > 0) {
+      const contactFound = store.contacts.find(
+        (contact) => String(contact.id) === String(id)
+      );
+
+      if (contactFound) {
+        setFormData({
+          name: contactFound.name || "",
+          email: contactFound.email || "",
+          phone: contactFound.phone || "",
+          address: contactFound.address || ""
+        });
       }
-
-      if (id) {
-        const contactFound = actions.getOneContactFromStore(id);
-
-        if (contactFound) {
-          setFormData({
-            name: contactFound.name || "",
-            email: contactFound.email || "",
-            phone: contactFound.phone || "",
-            address: contactFound.address || ""
-          });
-        }
-      }
-    };
-
-    loadContact();
-  }, [id, store.contacts.length]);
+    }
+  }, [id, store.contacts]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
 
-    setFormData((prev) => ({
-      ...prev,
+    setFormData({
+      ...formData,
       [name]: value
-    }));
+    });
   };
 
   const handleSubmit = async (event) => {
